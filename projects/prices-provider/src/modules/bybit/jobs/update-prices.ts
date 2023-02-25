@@ -1,4 +1,5 @@
-import { addHours, differenceInCalendarDays } from "date-fns";
+import { error } from "console";
+import { addHours, differenceInCalendarDays, differenceInHours } from "date-fns";
 import { orderAscByProperty } from "../../../core/helpers/array";
 import { getDataSource } from "../../../core/services/postgres-data-source";
 import { SymbolTimeframePriceInfo } from "../models/client-models";
@@ -18,7 +19,7 @@ export const updatePrices = async (symbol: string) => {
 
     const oneHourAgo = addHours(new Date(), -1).getTime();
     let lastStoredDate = Number((await priceRepository.findOne({ where: { symbol }, order: { startTime: "DESC" } }))?.startTime || DEFAULT_STARTING_DATE);
-    let delta = differenceInCalendarDays(oneHourAgo, lastStoredDate);
+    let delta = differenceInHours(oneHourAgo, lastStoredDate);
 
     while (delta > 0) {
         const start = addHours(new Date(lastStoredDate), 1).getTime();
@@ -26,7 +27,7 @@ export const updatePrices = async (symbol: string) => {
 
         if (!prices.length) {
             lastStoredDate = addHours(start, DEFAULT_CHUNK_SIZE).getTime();
-            delta = differenceInCalendarDays(oneHourAgo, lastStoredDate);
+            delta = differenceInHours(oneHourAgo, lastStoredDate);
             continue;
         }
 
@@ -53,7 +54,7 @@ export const updatePrices = async (symbol: string) => {
             .execute();
 
         lastStoredDate = orderedPrices[orderedPrices.length - 1].startTime;
-        delta = differenceInCalendarDays(oneHourAgo, lastStoredDate);
+        delta = differenceInHours(oneHourAgo, lastStoredDate);
     }
 }
 
@@ -69,7 +70,8 @@ const updateSymbolPrices = (index, symbols) =>
             index++;
             updateSymbolPrices(index, symbols);
         } else {
-            console.error(`Found ${brokenSymbols.size} errors: ${brokenSymbols}`);
+            if (!!brokenSymbols.size)
+                console.error(`Found ${brokenSymbols.size} errors: ${[...brokenSymbols.keys()]}`);
         }
     }, 0);
 

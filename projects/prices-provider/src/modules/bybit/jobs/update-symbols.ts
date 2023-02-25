@@ -20,6 +20,7 @@ export const updateSymbols = async () => {
         .insert()
         .into(BybitTickerSymbol)
         .values(values)
+        .orIgnore()
         .execute();
 
     console.log("Updated symbols completed");
