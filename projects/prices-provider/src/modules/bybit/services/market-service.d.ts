@@ -64,3 +64,10 @@ export interface GetKlineResult {
     category: CategoryType;
     list: string[][];
 }
+
+export interface GetHistoryQueryParams {
+    symbol?: string;
+    start?: number | string;
+    end?: number | string;
+}
+

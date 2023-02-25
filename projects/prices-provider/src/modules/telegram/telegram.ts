@@ -25,11 +25,7 @@ export class AlgoTelegramBot {
             const chunk = messages.splice(0, chunkSize);
             const message = chunk.join("\n\n");
             if (message) {
-                AlgoTelegramBot.getInstance().sendMessage(AlgoTelegramBot.userToken, message)
-                    .catch((error) => {
-                        console.log(error.code);
-                        console.log(error.response.body);
-                    });
+                AlgoTelegramBot.getInstance().sendMessage(AlgoTelegramBot.userToken, message).catch(console.error);
             }
         }
     };

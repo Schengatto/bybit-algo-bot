@@ -1,6 +1,6 @@
 export interface SymbolPriceInfo {
     symbol: string;
-    current: number;
+    current?: number;
     bidPrice?: number;
     askPrice?: number;
 }
@@ -12,6 +12,6 @@ export interface SymbolTimeframePriceInfo extends SymbolPriceInfo {
     low: number;
     high: number;
     volume: number;
-    turnover: number;
+    turnover?: number;
     priceChangePercent: number;
 }

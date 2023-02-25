@@ -28,10 +28,10 @@ export const startJobs = () => {
     });
 
 
-    // const updatePrices = schedule.scheduleJob('*/10 * * * * *', async () => {
+    const updatePrices = schedule.scheduleJob('0 0 */1 * * *', async () => {
         const worker_process = fork(`${__dirname}/update-symbols.js`);
         worker_process.on('close', async () => updateSymbolsPrices());
-    // });
+    });
 
     console.log("All job schedulated.");
 };
