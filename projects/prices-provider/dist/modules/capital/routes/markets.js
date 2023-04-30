@@ -18,7 +18,25 @@ const markets_service_1 = __importDefault(require("../services/markets-service")
 const CapitalMarketsRoutes = (server, options) => __awaiter(void 0, void 0, void 0, function* () {
     server.get(`/${providers_1.BrokerPlatform.Capital}/markets`, (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
         const isDemo = request.headers["demo"] === "true";
-        return yield markets_service_1.default.getMarketsDetails({ queryParams: request.query, isDemo: isDemo });
+        return yield markets_service_1.default.getMarkets({ queryParams: request.query, isDemo: isDemo });
+    }));
+    server.get(`/${providers_1.BrokerPlatform.Capital}/markets/:epic`, (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
+        const { epic } = request.params;
+        const isDemo = request.headers["demo"] === "true";
+        return yield markets_service_1.default.getMarketDetails({ epic: epic, isDemo: isDemo });
+    }));
+    server.get(`/${providers_1.BrokerPlatform.Capital}/markets-categories`, (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
+        const isDemo = request.headers["demo"] === "true";
+        return yield markets_service_1.default.getTopLevelMarketCategories(isDemo);
+    }));
+    server.get(`/${providers_1.BrokerPlatform.Capital}/markets-categories/:category`, (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
+        const { category } = request.params;
+        const isDemo = request.headers["demo"] === "true";
+        return yield markets_service_1.default.getMarketsOfCategory({
+            queryParams: request.query,
+            isDemo: isDemo,
+            nodeId: category,
+        });
     }));
 });
 exports.default = (0, fastify_plugin_1.default)(CapitalMarketsRoutes);

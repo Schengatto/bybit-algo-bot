@@ -17,7 +17,7 @@ const settings_1 = require("../config/settings");
 const capital_http_service_1 = __importDefault(require("./capital-http-service"));
 const baseUrl = (isDemo) => (isDemo ? settings_1.TESTNET_API_BASE_URL : settings_1.API_BASE_URL);
 class MarketsHttpService {
-    getMarketsDetails(params) {
+    getMarkets(params) {
         return __awaiter(this, void 0, void 0, function* () {
             const request = new request_builder_1.RequestBuilder()
                 .withURL(`${baseUrl(params.isDemo)}/${settings_1.API_VERSION_1}/markets`)
@@ -26,6 +26,36 @@ class MarketsHttpService {
             return capital_http_service_1.default.get(request)
                 .then((res) => res.data)
                 .then((data) => data.markets);
+        });
+    }
+    getMarketDetails(params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const request = new request_builder_1.RequestBuilder()
+                .withURL(`${baseUrl(params.isDemo)}/${settings_1.API_VERSION_1}/markets/${params.epic}`)
+                .build();
+            return capital_http_service_1.default.get(request)
+                .then((res) => res.data);
+        });
+    }
+    getTopLevelMarketCategories(isDemo) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const request = new request_builder_1.RequestBuilder()
+                .withURL(`${baseUrl(isDemo)}/${settings_1.API_VERSION_1}/marketnavigation`)
+                .build();
+            return capital_http_service_1.default.get(request)
+                .then((res) => res.data)
+                .then((data) => data.nodes);
+        });
+    }
+    getMarketsOfCategory(params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const request = new request_builder_1.RequestBuilder()
+                .withURL(`${baseUrl(params.isDemo)}/${settings_1.API_VERSION_1}/marketnavigation/${params.nodeId}`)
+                .withParams(params.queryParams)
+                .build();
+            return capital_http_service_1.default.get(request)
+                .then((res) => res.data)
+                .then((data) => data.nodes);
         });
     }
 }
