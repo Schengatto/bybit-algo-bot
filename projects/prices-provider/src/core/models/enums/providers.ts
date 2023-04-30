@@ -1,3 +1,4 @@
-export enum CryptoExchanger {
+export enum BrokerPlatform {
     Bybit = "bybit",
+    Capital = "capital"
 }

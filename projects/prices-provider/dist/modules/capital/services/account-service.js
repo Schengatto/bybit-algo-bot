@@ -12,12 +12,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const fastify_plugin_1 = __importDefault(require("fastify-plugin"));
-const providers_1 = require("../../../core/models/enums/providers");
-const account_service_1 = __importDefault(require("../services/account-service"));
-const BybitWalletRoutes = (server, options) => __awaiter(void 0, void 0, void 0, function* () {
-    server.get(`/${providers_1.BrokerPlatform.Bybit}/account/wallet`, (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
-        return yield account_service_1.default.getWalletBalance(request.query);
-    }));
-});
-exports.default = (0, fastify_plugin_1.default)(BybitWalletRoutes);
+const request_builder_1 = require("./../../../core/helpers/request-builder");
+const settings_1 = require("../config/settings");
+const capital_http_service_1 = __importDefault(require("./capital-http-service"));
+const baseUrl = (isDemo) => isDemo ? settings_1.TESTNET_API_BASE_URL : settings_1.API_BASE_URL;
+class AccountHttpService {
+    getAccounts(isDemo) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const request = new request_builder_1.RequestBuilder()
+                .withURL(`${baseUrl(isDemo)}/${settings_1.API_VERSION_1}/accounts`)
+                .build();
+            return capital_http_service_1.default
+                .get(request)
+                .then((res) => res.data)
+                .then((data) => data.accounts);
+        });
+    }
+}
+exports.default = new AccountHttpService();

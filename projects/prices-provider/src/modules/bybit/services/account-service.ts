@@ -5,7 +5,7 @@ import { AccountService, BybitUserWallet, GetWalletBalanceQueryParams } from './
 import { getResult } from "./helpers/validations";
 import BybitHttpService from './bybit-http-service';
 
-class MarketHttpService implements AccountService {
+class AccountHttpService implements AccountService {
 
     /** https://bybit-exchange.github.io/docs/v5/account/wallet-balance */
     async getWalletBalance(params: GetWalletBalanceQueryParams): Promise<BybitUserWallet[]> {
@@ -23,4 +23,4 @@ class MarketHttpService implements AccountService {
 }
 
 
-export default new MarketHttpService();
+export default new AccountHttpService();

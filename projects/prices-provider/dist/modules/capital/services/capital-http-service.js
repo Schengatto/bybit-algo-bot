@@ -49,6 +49,7 @@ class CapitalHttpService extends http_service_1.AbstractHttpService {
         });
     }
     createEncryptPassword(authInfo) {
+        // TODO: there is something wrong here.
         try {
             const input = Buffer.from(`${this._password}|${authInfo.timestamp}`);
             const key = { key: authInfo.encryptionKey, format: "pem", type: "pkcs1" };
@@ -71,22 +72,26 @@ class CapitalHttpService extends http_service_1.AbstractHttpService {
             // CST and X-SECURITY-TOKEN (10 minutes after last use)
             // CST is an authorization token, X-SECURITY-TOKEN shows which financial account is used for the trades.
             const response = yield this.post(request);
-            const securityToken = response.headers["X-SECURITY-TOKEN"];
-            const cst = response.headers["CST"];
+            const securityToken = response.headers["x-security-token"];
+            const cst = response.headers["cst"];
             return { cst, securityToken };
         });
     }
     createAuthenticationHeaders() {
         return __awaiter(this, void 0, void 0, function* () {
-            // const authInfo = await this.getAuthInfo();
-            // const encyptedPassword = await this.createEncryptPassword(authInfo);
-            const session = yield this.createSession(this._password);
-            // check the encryptionKey and timestmap
-            return {
-                "X-SECURITY-TOKEN": session.securityToken,
-                "CST": session.cst,
-                "Content-Type": "application/json; charset=utf-8",
-            };
+            try {
+                // const authInfo = await this.getAuthInfo();
+                // const encyptedPassword = await this.createEncryptPassword(authInfo);
+                const session = yield this.createSession(this._password);
+                return {
+                    "X-SECURITY-TOKEN": session.securityToken,
+                    "CST": session.cst,
+                    "Content-Type": "application/json; charset=utf-8",
+                };
+            }
+            catch (error) {
+                throw new Error(`Invalid authentication: ${error}`);
+            }
         });
     }
 }

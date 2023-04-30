@@ -16,7 +16,7 @@ const request_builder_1 = require("./../../../core/helpers/request-builder");
 const settings_1 = require("../config/settings");
 const validations_1 = require("./helpers/validations");
 const bybit_http_service_1 = __importDefault(require("./bybit-http-service"));
-class MarketHttpService {
+class AccountHttpService {
     /** https://bybit-exchange.github.io/docs/v5/account/wallet-balance */
     getWalletBalance(params) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -31,4 +31,4 @@ class MarketHttpService {
         });
     }
 }
-exports.default = new MarketHttpService();
+exports.default = new AccountHttpService();

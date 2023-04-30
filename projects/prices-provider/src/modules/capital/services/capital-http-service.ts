@@ -49,6 +49,7 @@ class CapitalHttpService extends AbstractHttpService {
     }
 
     private createEncryptPassword(authInfo: AuthInfo): string {
+        // TODO: there is something wrong here.
         try {
             const input = Buffer.from(`${this._password}|${authInfo.timestamp}`);
             const key: PublicKeyInput = { key: authInfo.encryptionKey, format: "pem", type: "pkcs1" };
@@ -71,22 +72,24 @@ class CapitalHttpService extends AbstractHttpService {
         // CST and X-SECURITY-TOKEN (10 minutes after last use)
         // CST is an authorization token, X-SECURITY-TOKEN shows which financial account is used for the trades.
         const response = await this.post<AuthInfo>(request);
-        const securityToken = response.headers["X-SECURITY-TOKEN"];
-        const cst = response.headers["CST"];
+        const securityToken = response.headers["x-security-token"];
+        const cst = response.headers["cst"];
         return { cst, securityToken };
     }
 
     private async createAuthenticationHeaders(): Promise<Dictionary<string>> {
-        // const authInfo = await this.getAuthInfo();
-        // const encyptedPassword = await this.createEncryptPassword(authInfo);
-        const session = await this.createSession(this._password);
-
-        // check the encryptionKey and timestmap
-        return {
-            "X-SECURITY-TOKEN": session.securityToken,
-            "CST": session.cst,
-            "Content-Type": "application/json; charset=utf-8",
-        };
+        try {
+            // const authInfo = await this.getAuthInfo();
+            // const encyptedPassword = await this.createEncryptPassword(authInfo);
+            const session = await this.createSession(this._password);
+            return {
+                "X-SECURITY-TOKEN": session.securityToken,
+                "CST": session.cst,
+                "Content-Type": "application/json; charset=utf-8",
+            };
+        } catch (error) {
+            throw new Error(`Invalid authentication: ${error}`);
+        }
     }
 }
 

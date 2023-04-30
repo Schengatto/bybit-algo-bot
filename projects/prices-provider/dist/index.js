@@ -12,26 +12,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const providers_1 = require("./core/models/enums/providers");
 const prices_1 = __importDefault(require("./modules/bybit/routes/prices"));
 const wallet_1 = __importDefault(require("./modules/bybit/routes/wallet"));
 const bybit_http_service_1 = __importDefault(require("./modules/bybit/services/bybit-http-service"));
 const capital_http_service_1 = __importDefault(require("./modules/capital/services/capital-http-service"));
+const accounts_1 = __importDefault(require("./modules/capital/routes/accounts"));
+const markets_1 = __importDefault(require("./modules/capital/routes/markets"));
 const fastify = require("fastify")({ logger: true });
-// Routes
-fastify.register(prices_1.default);
-fastify.register(wallet_1.default);
-// Configuration
-var Broker;
-(function (Broker) {
-    Broker["Bybit"] = "bybit";
-    Broker["Capital"] = "capital";
-})(Broker || (Broker = {}));
-if (process.argv.length > 2 && !Object.values(Broker).includes(process.argv[2])) {
-    throw Error(`You must provide the BROKER. ${JSON.stringify(Object.values(Broker))}`);
+if (process.argv.length > 2 && !Object.values(providers_1.BrokerPlatform).includes(process.argv[2])) {
+    throw Error(`You must provide the BROKER. ${JSON.stringify(Object.values(providers_1.BrokerPlatform))}`);
 }
 const broker = process.argv[2];
 switch (broker) {
-    case Broker.Bybit:
+    case providers_1.BrokerPlatform.Bybit:
         let bybit_apiKey = "";
         let bybit_apiSecret = "";
         if (process.argv.length >= 4) {
@@ -48,7 +42,7 @@ switch (broker) {
         // Init services
         bybit_http_service_1.default.init({ apiKey: bybit_apiKey, apiSecret: bybit_apiSecret });
         break;
-    case Broker.Capital:
+    case providers_1.BrokerPlatform.Capital:
         if (process.argv.length < 5) {
             throw Error("You must provide api key, username and password. E.g. node index.js capital myApiKey myUsername myPassword");
         }
@@ -69,5 +63,10 @@ const start = () => __awaiter(void 0, void 0, void 0, function* () {
         process.exit(1);
     }
 });
+// Routes
+fastify.register(prices_1.default);
+fastify.register(wallet_1.default);
+fastify.register(accounts_1.default);
+fastify.register(markets_1.default);
 start();
 // start().then(() => startJobs());

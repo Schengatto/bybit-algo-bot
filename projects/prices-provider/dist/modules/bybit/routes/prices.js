@@ -17,15 +17,15 @@ const providers_1 = require("./../../../core/models/enums/providers");
 const market_service_1 = __importDefault(require("../services/market-service"));
 const BybitPricesRoutes = (server, options) => __awaiter(void 0, void 0, void 0, function* () {
     // Prices
-    server.get(`/${providers_1.CryptoExchanger.Bybit}/prices/daily`, (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
+    server.get(`/${providers_1.BrokerPlatform.Bybit}/prices/daily`, (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
         request.query.category = request.query.category || "spot";
         return yield market_service_1.default.getTickers(request.query);
     }));
-    server.get(`/${providers_1.CryptoExchanger.Bybit}/prices/kline`, (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
+    server.get(`/${providers_1.BrokerPlatform.Bybit}/prices/kline`, (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
         request.query.category = request.query.category || "spot";
         return yield market_service_1.default.getKline(request.query);
     }));
-    server.get(`/${providers_1.CryptoExchanger.Bybit}/prices/history`, (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
+    server.get(`/${providers_1.BrokerPlatform.Bybit}/prices/history`, (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
         return yield market_service_1.default.getHistoricalPrices(request.query);
     }));
 });

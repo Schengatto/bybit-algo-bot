@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyPluginAsync, FastifyPluginOptions, FastifyReply, FastifyRequest } from "fastify";
 import fp from 'fastify-plugin';
-import { CryptoExchanger } from "../../../core/models/enums/providers";
+import { BrokerPlatform } from "../../../core/models/enums/providers";
 
 import AccountService from "../services/account-service";
 import { GetWalletBalanceQueryParams } from "../services/account-service.d";
@@ -17,7 +17,7 @@ type AccountWalletBalanceRequest = FastifyRequest<{
 
 const BybitWalletRoutes: FastifyPluginAsync = async (server: FastifyInstance, options: FastifyPluginOptions) => {
 
-    server.get(`/${CryptoExchanger.Bybit}/account/wallet`, async (request: AccountWalletBalanceRequest, reply: FastifyReply) => {
+    server.get(`/${BrokerPlatform.Bybit}/account/wallet`, async (request: AccountWalletBalanceRequest, reply: FastifyReply) => {
         return await AccountService.getWalletBalance(request.query);
     });
 };
