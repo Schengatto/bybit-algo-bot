@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { ThemeContext, themes } from "../../contexts/Theme";
+import { ThemeContext, Theme } from "../../contexts/Theme";
 
 const ThemeSwitchButton: FunctionComponent = () => {
     const [darkMode, setDarkMode] = React.useState(true);
@@ -12,7 +12,7 @@ const ThemeSwitchButton: FunctionComponent = () => {
                         color="link"
                         onClick={() => {
                             setDarkMode(!darkMode);
-                            changeTheme(darkMode ? themes.light : themes.dark);
+                            changeTheme(darkMode ? Theme.Light : Theme.Dark);
                         }}
                     >
                         <i className={darkMode ? '🔆' : '🌜'}></i>

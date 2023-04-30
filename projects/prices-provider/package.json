@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "start": "nodemon dist/index.js"
+    "start:bybit": "nodemon dist/index.js bybit",
+    "start:capital": "nodemon dist/index.js capital"
   },
   "keywords": [
     "trading"

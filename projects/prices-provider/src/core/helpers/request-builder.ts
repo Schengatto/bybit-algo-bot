@@ -1,19 +1,13 @@
 ﻿import { Dictionary } from "../models";
 
-export type QueryStringParameter =
-    | string
-    | number
-    | boolean
-    | Date
-    | (string | number | Date)[]
-    | null
-    | undefined;
+export type QueryStringParameter = string | number | boolean | Date | (string | number | Date)[] | null | undefined;
 
 export interface RequestInfo {
     url: string;
     headers?: Dictionary<string | boolean | number>;
     parameters?: Dictionary<QueryStringParameter>;
     payload?: any;
+    isAnonymous?: boolean;
 }
 
 export class RequestBuilder {
@@ -21,6 +15,7 @@ export class RequestBuilder {
     private _headers: Dictionary<string | number | boolean> = {};
     private _params: Dictionary<QueryStringParameter> = {};
     private _payload?: any;
+    private _isAnonymous?: boolean = false;
 
     withURL(value: string): RequestBuilder {
         this._url = value;
@@ -46,6 +41,11 @@ export class RequestBuilder {
         return this.withHeaders({ "Content-Type": contentType });
     }
 
+    withoutAuthentication() {
+        this._isAnonymous = true;
+        return this;
+    }
+
     build(): RequestInfo {
         if (!this._url) {
             throw new Error("URL is not defined");
@@ -54,7 +54,8 @@ export class RequestBuilder {
             url: this._url,
             headers: this._headers,
             parameters: this._params,
-            payload: this._payload
+            payload: this._payload,
+            isAnonymous: this._isAnonymous,
         };
     }
 }

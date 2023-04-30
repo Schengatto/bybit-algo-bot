@@ -13,7 +13,7 @@ class BybitHttpService extends AbstractHttpService {
         this._apiSecret = config.apiSecret;
     }
 
-    getAuthenticationHeaders(requestInfo: RequestInfo): Dictionary<string> {
+    async getAuthenticationHeaders(requestInfo: RequestInfo): Promise<Dictionary<string>> {
         return this.createAuthenticationHeaders(requestInfo.parameters);
     }
 

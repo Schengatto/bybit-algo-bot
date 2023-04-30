@@ -1,12 +1,8 @@
 import axios, { AxiosError, AxiosInstance, AxiosResponse, CancelTokenSource, InternalAxiosRequestConfig } from "axios";
-import {
-    buildUrlQueryParams,
-    getUrlWithoutQueryParams,
-    isCancelEvent
-} from "../helpers/http";
+import { buildUrlQueryParams, getUrlWithoutQueryParams, isCancelEvent } from "../helpers/http";
 import { RequestInfo } from "../helpers/request-builder";
 import { InitializableService } from "../models";
-import { Dictionary } from './../models/index';
+import { Dictionary } from "./../models/index";
 
 export interface GetFileResponse {
     fileName: string;
@@ -31,12 +27,10 @@ export abstract class AbstractHttpService implements InitializableService {
     }
 
     abstract init(config: any): void;
-    abstract getAuthenticationHeaders(requestInfo: RequestInfo): Dictionary<string>;
+    abstract getAuthenticationHeaders(requestInfo: RequestInfo): Promise<Dictionary<string>>;
 
     static isFailResponse(data: any): boolean {
-        return typeof data === "object"
-            && "code" in data
-            && "message" in data;
+        return typeof data === "object" && "code" in data && "message" in data;
     }
 
     set pendingRequests(pendingRequests: Map<string, CancelTokenSource>) {
@@ -71,7 +65,6 @@ export abstract class AbstractHttpService implements InitializableService {
     }
 
     async handleErrorResponse(error: AxiosError): Promise<void> {
-
         if (!isCancelEvent(error) && error.config?.url) {
             _pendingRequests.delete(getUrlWithoutQueryParams(error.config.url));
         }
@@ -92,51 +85,62 @@ export abstract class AbstractHttpService implements InitializableService {
         }
     }
 
-    get<T>(requestInfo: RequestInfo): Promise<AxiosResponse<T>> {
-        const { headers, parameters, url } = requestInfo;
-        const fullHeaders = {...headers, ...this.getAuthenticationHeaders(requestInfo)};
-        return this.axios.get<T>(
-            `${url}${buildUrlQueryParams(parameters || {})}`,
-            { headers: fullHeaders });
+    async get<T>(requestInfo: RequestInfo): Promise<AxiosResponse<T>> {
+        const { parameters, url } = requestInfo;
+        let requestHeaders = { ...requestInfo.headers };
+        if (!requestInfo.isAnonymous) {
+            requestHeaders = { ...requestHeaders, ...(await this.getAuthenticationHeaders(requestInfo)) };
+        }
+        return await this.axios.get<T>(`${url}${buildUrlQueryParams(parameters || {})}`, { headers: requestHeaders });
     }
 
     async getFile(requestInfo: RequestInfo): Promise<GetFileResponse> {
         const { headers, parameters, url } = requestInfo;
-        const response = await this.axios.get(
-            `${url}${buildUrlQueryParams(parameters || {})}`,
-            {
-                ...headers,
-                ...this.getAuthenticationHeaders(requestInfo),
-                responseType: "blob",
-            });
+        const response = await this.axios.get(`${url}${buildUrlQueryParams(parameters || {})}`, {
+            ...headers,
+            ...this.getAuthenticationHeaders(requestInfo),
+            responseType: "blob",
+        });
 
         return {
-            fileName: this.getFileNameFromContentDispositionHeader(response.headers["content-disposition"] ?? "") ?? "untitled-file",
+            fileName:
+                this.getFileNameFromContentDispositionHeader(response.headers["content-disposition"] ?? "") ??
+                "untitled-file",
             fileData: new Blob([response.data], { type: response.headers["content-type"] }),
         };
     }
 
-    post<TResponse = void>(requestInfo: RequestInfo): Promise<AxiosResponse<TResponse>> {
-        const { headers, parameters, payload, url } = requestInfo;
-        return this.axios.post<TResponse>(
-            `${url}${buildUrlQueryParams(parameters || {})}`,
-            payload,
-            { headers: {...headers, ...this.getAuthenticationHeaders(requestInfo)} });
+    async post<TResponse = void>(requestInfo: RequestInfo): Promise<AxiosResponse<TResponse>> {
+        const { parameters, url, payload } = requestInfo;
+        let requestHeaders = { ...requestInfo.headers };
+        if (!requestInfo.isAnonymous) {
+            requestHeaders = { ...requestHeaders, ...(await this.getAuthenticationHeaders(requestInfo)) };
+        }
+        return await this.axios.post<TResponse>(`${url}${buildUrlQueryParams(parameters || {})}`, payload, {
+            headers: requestHeaders,
+        });
     }
 
-    put<TResponse = void>(requestInfo: RequestInfo): Promise<AxiosResponse<TResponse>> {
-        const { headers, parameters, payload, url } = requestInfo;
-        return this.axios.put<TResponse>(
-            `${url}${buildUrlQueryParams(parameters || {})}`,
-            payload,
-            { headers: {...headers, ...this.getAuthenticationHeaders(requestInfo)} });
+    async put<TResponse = void>(requestInfo: RequestInfo): Promise<AxiosResponse<TResponse>> {
+        const { parameters, payload, url } = requestInfo;
+        let requestHeaders = { ...requestInfo.headers };
+        if (!requestInfo.isAnonymous) {
+            requestHeaders = { ...requestHeaders, ...(await this.getAuthenticationHeaders(requestInfo)) };
+        }
+        return await this.axios.put<TResponse>(`${url}${buildUrlQueryParams(parameters || {})}`, payload, {
+            headers: requestHeaders,
+        });
     }
 
-    delete<TResponse = void>(requestInfo: RequestInfo): Promise<AxiosResponse<TResponse>> {
-        const { headers, parameters, url } = requestInfo;
-        return this.axios.delete<TResponse>(
-            `${url}${buildUrlQueryParams(parameters || {})}`,
-            { headers: {...headers, ...this.getAuthenticationHeaders(requestInfo)} });
+    async delete<TResponse = void>(requestInfo: RequestInfo): Promise<AxiosResponse<TResponse>> {
+        const { parameters, url, payload } = requestInfo;
+        let requestHeaders = { ...requestInfo.headers };
+        if (!requestInfo.isAnonymous) {
+            requestHeaders = { ...requestHeaders, ...(await this.getAuthenticationHeaders(requestInfo)) };
+        }
+        return await this.axios.delete<TResponse>(`${url}${buildUrlQueryParams(parameters || {})}`, {
+            headers: requestHeaders,
+        });
     }
 
     private getFileNameFromContentDispositionHeader(header: string): string | null {

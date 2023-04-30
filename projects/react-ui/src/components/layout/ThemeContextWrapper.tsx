@@ -1,21 +1,21 @@
 import React, { useState, useEffect, FunctionComponent, ReactNode } from 'react';
-import { ThemeContext, themes } from '../../contexts/Theme';
+import { ThemeContext, Theme } from '../../contexts/Theme';
 
 interface ThemeContextWrapperProps {
     children: ReactNode;
 }
 
 const ThemeContextWrapper: FunctionComponent<ThemeContextWrapperProps> = (props) => {
-    const [theme, setTheme] = useState(themes.dark);
+    const [theme, setTheme] = useState(Theme.Dark);
 
     const changeTheme = (theme: any) => setTheme(theme);
 
     useEffect(() => {
         switch (theme) {
-            case themes.light:
+            case Theme.Light:
                 document.body.classList.add('white-content');
                 break;
-            case themes.dark:
+            case Theme.Dark:
             default:
                 document.body.classList.remove('white-content');
                 break;

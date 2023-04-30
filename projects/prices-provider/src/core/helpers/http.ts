@@ -57,3 +57,17 @@ export function isCancelEvent(event: object): boolean {
     const proto = Object.getPrototypeOf(event);
     return proto[cancelProperty];
 }
+
+/**
+ * Read the headers from the request and return the one with the key provided as second argument.
+ * @param response
+ * @returns
+ */
+export function getHeaderFromResponse(response: AxiosResponse, header: string): string {
+    const headers = response.headers;
+    const lowerCaseHeaders = Object.keys(headers).reduce((acc, key) => ({
+        ...acc,
+        [key.toLowerCase()]: headers[key]
+    }), {});
+    return lowerCaseHeaders[header];
+}

@@ -1,6 +1,4 @@
-
 type AccountType = "UNIFIED" | "CONTRACT";
-
 
 export interface AccountService {
     getWalletBalance: (params: GetWalletBalanceQueryParams) => Promise<BybitUserWallet[]>;
