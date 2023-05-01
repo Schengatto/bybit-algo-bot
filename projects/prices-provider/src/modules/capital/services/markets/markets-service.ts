@@ -1,7 +1,7 @@
 import { FastifyRequest } from "fastify";
-import { RequestBuilder } from "../../../core/helpers/request-builder";
-import { API_BASE_URL, API_VERSION_1, TESTNET_API_BASE_URL } from "../config/settings";
-import CapitalHttpService from "./capital-http-service";
+import { RequestBuilder } from "../../../../core/helpers/request-builder";
+import { API_BASE_URL, API_VERSION_1, TESTNET_API_BASE_URL } from "../../config/settings";
+import CapitalHttpService from "../capital-http-service";
 import {
     CapitalMarketsService,
     GetMarketsResponse,

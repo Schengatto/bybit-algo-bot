@@ -14,7 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const fastify_plugin_1 = __importDefault(require("fastify-plugin"));
 const providers_1 = require("../../../core/models/enums/providers");
-const markets_service_1 = __importDefault(require("../services/markets-service"));
+const markets_service_1 = __importDefault(require("../services/markets/markets-service"));
+const markets_info_service_1 = __importDefault(require("../services/markets/markets-info-service"));
 const CapitalMarketsRoutes = (server, options) => __awaiter(void 0, void 0, void 0, function* () {
     server.get(`/${providers_1.BrokerPlatform.Capital}/markets`, (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
         const isDemo = request.headers["demo"] === "true";
@@ -36,6 +37,15 @@ const CapitalMarketsRoutes = (server, options) => __awaiter(void 0, void 0, void
             queryParams: request.query,
             isDemo: isDemo,
             nodeId: category,
+        });
+    }));
+    server.get(`/${providers_1.BrokerPlatform.Capital}/markets-info/price/:epic`, (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
+        const { epic } = request.params;
+        const isDemo = request.headers["demo"] === "true";
+        return yield markets_info_service_1.default.getHistoricalPrices({
+            queryParams: request.query,
+            isDemo: isDemo,
+            epic: epic,
         });
     }));
 });

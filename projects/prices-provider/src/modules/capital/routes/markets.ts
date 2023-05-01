@@ -2,8 +2,9 @@ import { FastifyInstance, FastifyPluginAsync, FastifyPluginOptions, FastifyReply
 import fp from "fastify-plugin";
 import { BrokerPlatform } from "../../../core/models/enums/providers";
 
-import AccountService from "../services/account-service";
-import MarketsService from "../services/markets-service";
+import MarketsService from "../services/markets/markets-service";
+import marketsInfoService from "../services/prices/market-prices-service";
+import { Resolution } from "../services/prices/market-prices-service.d";
 
 // Declaration merging
 declare module "fastify" {
@@ -29,11 +30,14 @@ const CapitalMarketsRoutes: FastifyPluginAsync = async (server: FastifyInstance,
         return await MarketsService.getMarkets({ queryParams: request.query, isDemo: isDemo });
     });
 
-    server.get(`/${BrokerPlatform.Capital}/markets/:epic`, async (request: MarketDetailsRequest, reply: FastifyReply) => {
-        const { epic } = request.params;
-        const isDemo = request.headers["demo"] === "true";
-        return await MarketsService.getMarketDetails({ epic: epic, isDemo: isDemo });
-    });
+    server.get(
+        `/${BrokerPlatform.Capital}/markets/:epic`,
+        async (request: MarketDetailsRequest, reply: FastifyReply) => {
+            const { epic } = request.params;
+            const isDemo = request.headers["demo"] === "true";
+            return await MarketsService.getMarketDetails({ epic: epic, isDemo: isDemo });
+        }
+    );
 
     server.get(
         `/${BrokerPlatform.Capital}/markets-categories`,

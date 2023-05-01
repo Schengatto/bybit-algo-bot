@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyPluginAsync, FastifyPluginOptions, FastifyReply
 import fp from 'fastify-plugin';
 import { BrokerPlatform } from "../../../core/models/enums/providers";
 
-import AccountService from "../services/account-service";
+import AccountService from "../services/accounts/account-service";
 
 // Declaration merging
 declare module 'fastify' {

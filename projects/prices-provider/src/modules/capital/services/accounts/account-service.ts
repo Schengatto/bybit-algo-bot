@@ -1,7 +1,7 @@
-import { RequestBuilder } from "./../../../core/helpers/request-builder";
-import { API_BASE_URL, API_VERSION_1, TESTNET_API_BASE_URL } from "../config/settings";
-import CapitalHttpService from "./capital-http-service";
-import {Account, CapitalAccountService, GetAccountsResponse} from "./account-service.d";
+import { RequestBuilder } from "../../../../core/helpers/request-builder";
+import { API_BASE_URL, API_VERSION_1, TESTNET_API_BASE_URL } from "../../config/settings";
+import CapitalHttpService from "../capital-http-service";
+import {Account, CapitalAccountService, GetAccountsResponse} from "../accounts/account-service.d";
 
 const baseUrl = (isDemo: boolean) =>  isDemo ? TESTNET_API_BASE_URL : API_BASE_URL;
 
