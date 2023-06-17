@@ -71,10 +71,18 @@ class CapitalHttpService extends AbstractHttpService {
 
         // CST and X-SECURITY-TOKEN (10 minutes after last use)
         // CST is an authorization token, X-SECURITY-TOKEN shows which financial account is used for the trades.
-        const response = await this.post<AuthInfo>(request);
-        const securityToken = response.headers["x-security-token"];
-        const cst = response.headers["cst"];
-        return { cst, securityToken };
+        try {
+            const response = await this.post<AuthInfo>(request);
+            if (!response) {
+                throw new Error(`Invalid response from Capital.com API: ${response}`);
+            }
+            const securityToken = response.headers["x-security-token"];
+            const cst = response.headers["cst"];
+            return { cst, securityToken };
+        } catch (error) {
+            console.error(`Unable to create a new session on Capital.com: ${error}`);
+            throw new Error(error);
+        }
     }
 
     private async createAuthenticationHeaders(): Promise<Dictionary<string>> {

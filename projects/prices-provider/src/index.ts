@@ -1,5 +1,5 @@
-import { BrokerPlatform } from "./core/models/enums/providers";
-import { startJobs } from "./modules/bybit/jobs/scheduler";
+import {BrokerPlatform} from "./core/models/enums/providers";
+import {startJobs} from "./modules/bybit/jobs/scheduler";
 import BybitPricesRoutes from "./modules/bybit/routes/prices";
 import BybitWalletRoutes from "./modules/bybit/routes/wallet";
 import BybitHttpService from "./modules/bybit/services/bybit-http-service";
@@ -7,7 +7,7 @@ import capitalHttpService from "./modules/capital/services/capital-http-service"
 import CapitalAccountRoutes from "./modules/capital/routes/accounts";
 import CapitalMarketsRoutes from "./modules/capital/routes/markets";
 
-const fastify = require("fastify")({ logger: true });
+const fastify = require("fastify")({logger: true});
 
 if (process.argv.length > 2 && !(Object.values(BrokerPlatform) as string[]).includes(process.argv[2])) {
     throw Error(`You must provide the BROKER. ${JSON.stringify(Object.values(BrokerPlatform))}`);
@@ -29,18 +29,18 @@ switch (broker) {
             bybit_apiSecret = tokens.apiSecret;
         }
         // Init services
-        BybitHttpService.init({ apiKey: bybit_apiKey, apiSecret: bybit_apiSecret });
+        BybitHttpService.init({apiKey: bybit_apiKey, apiSecret: bybit_apiSecret});
         break;
     case BrokerPlatform.Capital:
-        if (process.argv.length < 5) {
+        const capital_apiKey = process.argv.length > 3 ? process.argv[3] : process.env.CAPITAL_APY_KEY;
+        const capital_username = process.argv.length > 4 ? process.argv[4] : process.env.CAPITAL_USERNAME;
+        const capital_password = process.argv.length > 5 ? process.argv[5] : process.env.CAPITAL_PASSWORD;
+        if (!capital_apiKey || !capital_username || !capital_password) {
             throw Error(
                 "You must provide api key, username and password. E.g. node index.js capital myApiKey myUsername myPassword"
             );
         }
-        const capital_apiKey = process.argv[3];
-        const capital_username = process.argv[4];
-        const capital_password = process.argv[5];
-        capitalHttpService.init({ apiKey: capital_apiKey, identifier: capital_username, password: capital_password });
+        capitalHttpService.init({apiKey: capital_apiKey, identifier: capital_username, password: capital_password});
         break;
     default:
         throw Error("Invalid Broker");
@@ -48,7 +48,7 @@ switch (broker) {
 
 const start = async () => {
     try {
-        await fastify.listen({ port: 3000, host: "0.0.0.0" });
+        await fastify.listen({port: 3000, host: "0.0.0.0"});
     } catch (err) {
         fastify.log.error(err);
         process.exit(1);
